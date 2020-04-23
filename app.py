@@ -1,3 +1,4 @@
+from PIL import Image
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -15,6 +16,10 @@ def get_data():
   # return pd.read_csv("http://data.insideairbnb.com/united-states/ny/new-york-city/2019-09-12/visualisations/listings.csv")
   return pd.read_csv("data/listings.csv")
 
+@st.cache
+def get_profile_pic():
+  return Image.open('profile.png')
+
 def get_table_download_link(df):
     """Generates a link allowing the data in a given panda dataframe to be downloaded
     in:  dataframe
@@ -22,14 +27,37 @@ def get_table_download_link(df):
     """
     csv = df.to_csv(sep='\t', decimal=',', index=False, header=False)
     b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-    href = f'<a href="data:file/csv;base64,{b64}">csv file</a>'
+    href = f'<a href="data:file/csv;base64,{b64}">Download csv file</a>'
     return href
 
 
 def main():
   df = get_data()
+
+  ################################ SIDEBAR ################################
+
+  st.sidebar.image(get_profile_pic(), use_column_width=False, width=250)
+  st.sidebar.header("Bem-vindo!")
+
+  st.sidebar.markdown(" ")
+  st.sidebar.markdown("Sou pesquisador nas áreas de Machine Learning/DS, com ênfase em Visão Computacional e Análise de Dados. Atuo principalmente nos seguintes temas: reconhecimento de padrões, estatística inferencial e descritiva, probabilidade, aprendizado profundo.")
+
+  st.sidebar.markdown("**Autor**: Toni Esteves")
+  st.sidebar.markdown("**Contato**: toni.esteves@gmail.com")
+
+  st.sidebar.markdown("- [Linkedin](https://www.linkedin.com/in/toniesteves/)")
+  st.sidebar.markdown("- [Twitter](https://twitter.com/)")
+  st.sidebar.markdown("- [Medium](https://medium.com/@toni_esteves)")
+
+
+  st.sidebar.markdown("**Versão:** 1.0.0")
+
+
+  ################################ SUMMARY ################################
+
   st.title("Análise de Dados no Airbnb NY")
-  st.markdown("Através dos dados do Airbnb NY vamos efetuar uma análise exploratoria e oferecer insights sobre esses dados. Para isso vamos utilizar o [dataset](http://data.insideairbnb.com/united-states/ny/new-york-city/2019-09-12/visualisations/listings.csv) do Airbnb, contendo os anuncios de NY até o ano de 2020")
+  st.markdown("Através dos dados do Airbnb NY vamos efetuar uma análise exploratória e oferecer insights sobre esses dados. Para isso vamos utilizar os dados por trás do site **Inside Airbnb** são provenientes de informações publicamente disponíveis no site Airbnb disponíveis o [aqui](http://data.insideairbnb.com/united-states/ny/new-york-city/2019-09-12/visualisations/listings.csv) contendo anuncios de hospedagens de NY até o ano de 2020")
+
 
   st.header("Resumo")
 
@@ -48,8 +76,14 @@ def main():
 
   st.header("Localização")
   st.markdown("Abaixo destacamos  a distribuição geográfica das hopedagens por preço. ")
-  values = st.slider('', 100, 10000, (500))
-  st.map(df.query(f"price>={values}")[["latitude", "longitude"]].dropna(how="any"), zoom=10)
+
+  values = st.slider("Price Range ($)", float(df.price.min()), float(df.price.clip(upper=10000.).max()), (50., 1000.))
+  # values = st.slider('Price ($)', 100, 10000, (500))
+  min_nights_values = st.slider('Nº Nights', 0, 30, (1))
+  reviews = st.slider('Reviews', 0, 700, (5))
+  st.map(df.query(f"price.between{values} and minimum_nights<={min_nights_values} and number_of_reviews>={reviews}")[["latitude", "longitude"]].dropna(how="any"), zoom=10)
+
+  # st.map(df.query(f"minimum_nights>={min_nights_values}")[["latitude", "longitude"]].dropna(how="any"), zoom=10)
 
 
   #################### FILTRANDO POR ÁREAS DE INTERESSE ######################
@@ -164,27 +198,6 @@ def main():
 
   st.write("654 é o número mais alto de críticas e apenas uma única propriedade o possui. Em geral, listagens com mais de 400 avaliações têm um preço abaixo de US $ 100. Alguns estão entre US $ 100 e US $ 200, e apenas um tem preço acima de US $ 200.")
 
-
-
-  ################################ SIDEBAR ################################
-
-  st.sidebar.subheader("Bem-vindo!")
-
-  st.sidebar.markdown(" ")
-  st.sidebar.markdown(" ")
-  st.sidebar.markdown("Sou pesquisador nas áreas de Machine Learning/DS, com ênfase em Visão Computacional e Análise de Dados. Atuo principalmente nos seguintes temas: reconhecimento de padrões, estatística inferencial e descritiva, probabilidade, aprendizado profundo.")
-
-  st.sidebar.markdown("**Projeto:** Análise exploratória dos dados do Airbnb")
-
-  st.sidebar.markdown("**Autor**: Toni Esteves")
-  st.sidebar.markdown("**Contato**: toni.esteves@gmail.com")
-
-  st.sidebar.markdown("- [Linkedin](https://www.linkedin.com/in/toniesteves/)")
-  st.sidebar.markdown("- [Twitter](https://twitter.com/)")
-  st.sidebar.markdown("- [Medium](https://medium.com/@toni_esteves)")
-
-
-  st.sidebar.markdown("**Versão:** 1.0.0")
 
   st.markdown(get_table_download_link(df), unsafe_allow_html=True)
 
