@@ -124,7 +124,7 @@ def main():
   ################### PERCENTAGE DISTRIBUTION BY DISTRICT #####################
 
   st.header("Availability and Distribution by District.")
-  st.markdown("The availability_365 feature mean the number of days of the year (365) listing availability. Let's check it out.")
+  st.markdown("The **availability_365** feature mean the number of days of the year (365) listing availability. Let's check it out.")
 
   neighborhood = st.radio("District", df.neighbourhood_group.unique())
   is_expensive = st.checkbox("Expensive Listings")
@@ -137,7 +137,7 @@ def main():
               percentiles=[.1, .25, .5, .75, .9, .99]).to_frame().T
 
   st.table(get_availability(is_expensive, neighborhood))
-  st.markdown("_**Note:** There are 18431 records with `availability_365` 0 (zero), which I've ignored._")
+  st.markdown("_**Note:** There are 18431 records with **availability_365** 0 (zero), which I've ignored._")
   st.markdown("At 170 days, Brooklyn has the lowest average availability. At 224, Staten Island has the highest average availability. If we include expensive listings (more tha $100 in a listing), the numbers are 171 and 230 respectively.")
 
   ###################### QUANTITY OF ROOM TYPES BY DISTRICT #######################
@@ -254,14 +254,14 @@ def main():
 
   st.markdown("The number of reviews for Queens appears more often. We get some insights here. 1)  the room type most sought in Queens is the **private room** (as seen in the previous plot). 2)  the price range in Queens is below Manhattan, so perhaps the Queens contemplate the _\"best of both worlds\"_ being the most cost-effective district.")
 
-  st.markdown("But, there is some correlation between reviews increase and prices? Let's check it out.")
+  st.markdown("But there is some correlation between reviews increase and prices? Let's check it out.")
 
   fig = px.scatter(price_corr_df, y="price", x="number_of_reviews", color="neighbourhood_group")
   fig.update_xaxes(title="Nª Reviews")
   fig.update_yaxes(title="Price ($)")
   st.plotly_chart(fig)
 
-  st.markdown("Well, actually does not happens a correlation between reviews and price. Apparently, the cheaper, the more opinions he has and again Queens has more reviews than others.")
+  st.markdown("Well, actually does not happens a correlation between reviews and price apparently, the cheaper the more opinions he has. Another point is,  Queens has more reviews than others, which reinforces our theory about being the most cost-effective district.")
 
 
   st.header("Most Rated Listings")
