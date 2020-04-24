@@ -1,6 +1,6 @@
 ## Airbnb NY listings Data Analysis.
 
------------------------------------------------------
+------------
 
 Through Airbnb NY data we will conduct an exploratory analysis and offer insights into that data. For this we will use the data behind the website Inside Airbnb come from publicly available information on the Airbnb website available here, containing advertisements for accommodation in NY until 2020
 
