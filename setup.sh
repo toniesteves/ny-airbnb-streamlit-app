@@ -1,3 +1,5 @@
+mkdir -p ~/.streamlit/
+
 echo "\
 [general]\n\
 email = \"toni.esteves@gmail.com\"\n\
