@@ -5,10 +5,10 @@ import streamlit as st
 import plotly.express as px
 import altair as alt
 import seaborn as sns
-sns.set(style="whitegrid")
 import base64
+import datetime
 from matplotlib import rcParams
-rcParams['figure.figsize'] = 15,7
+from  matplotlib.ticker import PercentFormatter
 
 
 @st.cache
@@ -37,96 +37,101 @@ def main():
   ################################ SIDEBAR ################################
 
   st.sidebar.image(get_profile_pic(), use_column_width=False, width=250)
-  st.sidebar.header("Bem-vindo!")
+  st.sidebar.header("Welcome!")
 
   st.sidebar.markdown(" ")
-  st.sidebar.markdown("Sou pesquisador nas áreas de Machine Learning/DS, com ênfase em Visão Computacional e Análise de Dados. Atuo principalmente nos seguintes temas: reconhecimento de padrões, estatística inferencial e descritiva, probabilidade, aprendizado profundo.")
+  st.sidebar.markdown("I am a researcher in Machine Learning/DS, with an emphasis on Computer Vision and Data Analysis. I work mainly on the following themes: pattern recognition, inferential and descriptive statistics, probability, deep learning.")
 
-  st.sidebar.markdown("**Autor**: Toni Esteves")
-  st.sidebar.markdown("**Contato**: toni.esteves@gmail.com")
+  st.sidebar.markdown("**Author**: Toni Esteves")
+  st.sidebar.markdown("**Mail**: toni.esteves@gmail.com")
 
   st.sidebar.markdown("- [Linkedin](https://www.linkedin.com/in/toniesteves/)")
   st.sidebar.markdown("- [Twitter](https://twitter.com/)")
   st.sidebar.markdown("- [Medium](https://medium.com/@toni_esteves)")
 
 
-  st.sidebar.markdown("**Versão:** 1.0.0")
+  st.sidebar.markdown("**Version:** 1.0.0")
 
 
   ################################ SUMMARY ################################
 
-  st.title("Análise de Dados no Airbnb NY")
-  st.markdown("Através dos dados do Airbnb NY vamos efetuar uma análise exploratória e oferecer insights sobre esses dados. Para isso vamos utilizar os dados por trás do site **Inside Airbnb** são provenientes de informações publicamente disponíveis no site Airbnb disponíveis o [aqui](http://data.insideairbnb.com/united-states/ny/new-york-city/2019-09-12/visualisations/listings.csv) contendo anuncios de hospedagens de NY até o ano de 2020")
+  st.title("Airbnb NY listings Data Analysis")
+  st.markdown('-----------------------------------------------------')
+
+  st.markdown("Through Airbnb NY data we will conduct an exploratory analysis and offer insights into that data. For this we will use the data behind the website **Inside Airbnb** come from publicly available information on the Airbnb website available [here](http://insideairbnb.com/), containing advertisements for accommodation in NY until 2020")
 
 
-  st.header("Resumo")
+  st.header("Summary")
 
-  st.markdown("O Airbnb é uma plataforma que fornece e orienta a oportunidade de vincular dois grupos - os anfitriões e os convidados. Qualquer pessoa com uma sala aberta ou espaço livre pode fornecer serviços no Airbnb à comunidade global. É uma boa maneira de fornecer renda extra com o mínimo esforço. É uma maneira fácil de anunciar espaço, porque a plataforma possui tráfego e uma base global de usuários para apoiá-lo. O Airbnb oferece aos hosts uma maneira fácil de monetizar um espaço que seria desperdiçado.")
+  st.markdown("Airbnb is a platform that provides and guides the opportunity to link two groups - the hosts and the guests. Anyone with an open room or free space can provide services on Airbnb to the global community. It is a good way to provide extra income with minimal effort. It is an easy way to advertise space, because the platform has traffic and a global user base to support it. Airbnb offers hosts an easy way to monetize space that would be wasted.")
 
-  st.markdown("Por outro lado, temos hóspedes com necessidades muito específicas - alguns podem estar procurando acomodações acessíveis perto das atrações da cidade, enquanto outros são um apartamento de luxo à beira-mar. Eles podem ser grupos, famílias ou indivíduos locais e estrangeiros. Depois de cada visita, os hóspedes têm a oportunidade de avaliar e ficar com seus comentários. Vamos tentar descobrir o que contribui para a popularidade da listagem e prever se a listagem tem potencial para se tornar uma das 100 acomodações mais revisadas com base em seus atributos.")
+  st.markdown("On the other hand, we have guests with very specific needs - some may be looking for affordable accommodation close to the city's attractions, while others are a luxury apartment by the sea. They can be groups, families or local and foreign individuals. After each visit, guests have the opportunity to rate and stay with their comments. We will try to find out what contributes to the listing's popularity and predict whether the listing has the potential to become one of the 100 most reviewed accommodations based on its attributes.")
 
   st.markdown('-----------------------------------------------------')
 
-  st.header("Anúncios do Airbnb em Nova York: Exploração de Dados")
-  st.markdown("Os primeiros 10 registros dos dados do Airbnb")
+  st.header("Airbnb New York Listings: Data Analysis")
+  st.markdown("Following is presented the first 10 records of Airbnb data. These records are grouped along 16 columns with a variety of informations as host name, price, room type, minimum of nights,reviews and reviews per month.")
+  st.markdown("We will start with familiarizing ourselves with the columns in the dataset, to understand what each feature represents. This is important, because a poor understanding of the features could cause us to make mistakes in the data analysis and the modeling process. We will also try to reduce number of columns that either contained elsewhere or do not carry information that can be used to answer our questions.")
 
   st.dataframe(df.head(10))
 
+  st.markdown("Another point about our data is that it allows sorting the dataframe upon clicking any column header, it a more flexible way to order data to visualize it.")
+
   #################### DISTRIBUIÇÃO GEOGRÁFICA ######################
 
-  st.header("Localização")
-  st.markdown("Abaixo destacamos  a distribuição geográfica das hopedagens por preço. ")
+  st.header("Listing Locations")
+  st.markdown("Below we highlight the geographical distribution of listings. Initially we can filter them by price range, minimum number of available nights and number of reviews, so more flexibility is added when looking for a place. ")
+  st.markdown("We could also filter by listing **price**, **minimum nights** on a listing or minimum of **reviews** received. ")
 
-  values = st.slider("Price Range ($)", float(df.price.min()), float(df.price.clip(upper=10000.).max()), (50., 1000.))
-  # values = st.slider('Price ($)', 100, 10000, (500))
-  min_nights_values = st.slider('Nº Nights', 0, 30, (1))
-  reviews = st.slider('Reviews', 0, 700, (5))
+  values = st.slider("Price Range ($)", float(df.price.min()), float(df.price.clip(upper=10000.).max()), (500., 1500.))
+  min_nights_values = st.slider('Minimum Nights', 0, 30, (1))
+  reviews = st.slider('Minimum Reviews', 0, 700, (0))
   st.map(df.query(f"price.between{values} and minimum_nights<={min_nights_values} and number_of_reviews>={reviews}")[["latitude", "longitude"]].dropna(how="any"), zoom=10)
 
-  # st.map(df.query(f"minimum_nights>={min_nights_values}")[["latitude", "longitude"]].dropna(how="any"), zoom=10)
+  st.markdown("The map shows that locations in the city centre are more expensive, while the outskirts are cheaper (a pattern that probably does not only exists in New York). In addition, the city centre seems to have its own pattern.")
+  st.markdown("Unsurprisingly, Manhattan island has the highest concentration of expensive Airbnbs. Some are scattered over Brooklyn too. The heftiest price tag is $10.000,00. Another likely insight is that if we know that a specific location is very close to a place we consider expensive most probably the whole sorrounding area will be expensive.")
+  st.markdown("In a side analysis it can be possible to see that around Manhattan there are much fewer flats than compared to areas around, in addition, most of the points of interest (_Empire State Buildind, Times Square, Central Park_) are located in ‘expensive’ areas, especially around Dam Square's district.")
+  st.markdown("In Staten Island, the areas close to the State Park have the highest location scores. Brooklyn neighbourhoods close to Manhattan tend to have higher location ratings. Looking at the NY subway system in Brooklyn, it is interesting to observe that the highly rated areas correspond with subway line presence. The same is true for Bronx where subway lines do not go.")
 
+  #################### AREAS OF INTEREST ######################
 
-  #################### FILTRANDO POR ÁREAS DE INTERESSE ######################
-  st.subheader("Selecting a subset of columns")
-  st.markdown("_**Note:** É possível buscar pelas seguintes características: **Preço**, **Tipo de Acomodação**, **Mínimo de Noites**, **Distrito**, **Nome do Local**, **Reviews**_")
-  st.write(f"Out of the {df.shape[1]} columns, you might want to view only a subset. Streamlit has a [multiselect](https://streamlit.io/docs/api.html#streamlit.multiselect) widget for this.")
+  st.header("Which you looking for?")
+  st.write(f"Out of the {df.shape[1]} columns, you might want to view only a subset. ")
+  st.markdown("_**Note:** In a  more conventient way to filter our data is possible filter our data through the following features: **Price**, **Room Type**, **Minimum of Nights**, **District(Neighbourhood)**, **Host Name**, **Reviews**_")
   defaultcols = ["price", "minimum_nights", "room_type", "neighbourhood", "name", "number_of_reviews"]
   cols = st.multiselect("Columns", df.columns.tolist(), default=defaultcols)
   st.dataframe(df[cols].head(10))
 
 
-  ################################## DISTRITOS ###############################
+  ################################## DISTRICT ###############################
 
-  st.subheader("Distritos")
-  st.markdown("A Cidade de Nova Iorque abrange cinco divisões administrativas em nível de condados chamadas *boroughs*: **Bronx**, **Brooklyn**, **Manhattan**, **Queens** e **Staten Island**. Cada *borough* é coincidente com um respectivo condado do Estado de Nova Iorque. Os boroughs de Queens e Bronx são concomitantes com os condados de mesmo nome, enquanto os boroughs de Manhattan, Brooklyn e Staten Island correspondem aos de Nova Iorque, Kings e Richmond, respectivamente.")
+  st.header("Districts")
+  st.markdown("The New York City encompasses five county-level administrative divisions called * boroughs *: ** Bronx **, ** Brooklyn **, ** Manhattan **, ** Queens ** and ** Staten Island **. Each * borough * matches a respective New York State county. The boroughs of Queens and Bronx are concurrent with the counties of the same name, while the boroughs of Manhattan, Brooklyn and Staten Island correspond to those of New York, Kings and Richmond, respectively.")
 
-  st.write(df.query("price>=800").sort_values("price", ascending=False).head())
+  # st.write(df.query("price>=800").sort_values("price", ascending=False).head())
 
-  st.markdown("Abaixo é possível verificar que a média de preço no distrito de Manhattan consegue ser bem superior")
+  st.markdown("Again unsurprisingly it is possible see that the average price in the Manhattan district can be much higher than other districts. Manhattan has an average price of twice the Bronx ")
 
-  fig = sns.barplot(x='neighbourhood_group', y='price', data=df.groupby('neighbourhood_group')['price'].mean().reset_index(),
+  # st.table(df.groupby("neighbourhood_group").price.mean().sort_values(ascending=False).reset_index()\
+  #     .round(2).sort_values("price", ascending=False)\
+  #     .assign(avg_price=lambda x: x.pop("price").apply(lambda y: "%.2f" % y)))
+
+  fig = sns.barplot(x='neighbourhood_group', y='price', data=df.groupby('neighbourhood_group')['price'].mean().sort_values(ascending=False).reset_index(),
   palette="Blues_d")
   sns.set(font_scale = 1.5)
-  fig.set_xlabel("Distrito",fontsize=20)
-  fig.set_ylabel("Preço ($)",fontsize=20)
+  fig.set_xlabel("District",fontsize=20)
+  fig.set_ylabel("Price ($)",fontsize=20)
 
   st.pyplot()
 
-  st.write("At 169 days, Brooklyn has the lowest average availability. At 226, Staten Island has the highest average availability.\
-  If we include expensive listings (price>=$200), the numbers are 171 and 230 respectively.")
-  st.markdown("_**Note:** There are 18431 records with `availability_365` 0 (zero), which I've ignored._")
 
+  ################### PERCENTAGE DISTRIBUTION BY DISTRICT #####################
 
-  ################### DISTRIBUIÇÃO PERCENTUAL POR DISTRITO #####################
-
-  st.header("Distribuição Percentual por Distrito.")
+  st.header("Percentage Distribution by District.")
   st.write("Using a radio button restricts selection to only one option at a time.")
-  st.write("💡 Notice how we use a static table below instead of a data frame. \
-  Unlike a data frame, if content overflows out of the section margin, \
-  a static table does not automatically hide it inside a scrollable area. \
-  Instead, the overflowing content remains visible.")
-  neighborhood = st.radio("Distrito", df.neighbourhood_group.unique())
-  is_expensive = st.checkbox("Acomodações Caras")
+
+  neighborhood = st.radio("District", df.neighbourhood_group.unique())
+  is_expensive = st.checkbox("Expensive Listings")
   is_expensive = " and price<200" if not is_expensive else ""
 
   @st.cache
@@ -136,42 +141,113 @@ def main():
               percentiles=[.1, .25, .5, .75, .9, .99]).to_frame().T
 
   st.table(get_availability(is_expensive, neighborhood))
+  st.write("At 169 days, Brooklyn has the lowest average availability. At 226, Staten Island has the highest average availability.\
+  If we include expensive listings (price>=$200), the numbers are 171 and 230 respectively.")
+  st.markdown("_**Note:** There are 18431 records with `availability_365` 0 (zero), which I've ignored._")
 
+  ###################### QUANTITY OF ROOM TYPES BY DISTRICT #######################
 
-  ###################### MÉDIA DE PREÇO POR ACOMODAÇÃO #######################
+  st.markdown("Following let's check the relationship between property type and neighbourhood. The primary question we aim to answer is whether different boroughs constitute of different rental types. Though in the expanded dataset there are more than 20 types, we will be focussing on the top 4 by their total count in the city and understanding their distribution in each borough.")
 
-  st.header("Média de Preço por Tipo de Acomodação")
-  st.write("You can also display static tables. As opposed to a data frame, with a static table you cannot sorting by clicking a column header.")
-  st.table(df.groupby("room_type").price.mean().reset_index()\
-      .round(2).sort_values("price", ascending=False)\
-      .assign(avg_price=lambda x: x.pop("price").apply(lambda y: "%.2f" % y)))
+  room_types_df = df.groupby(['neighbourhood_group', 'room_type']).size().reset_index(name='Quantity')
+  room_types_df = room_types_df.rename(columns={'neighbourhood_group': 'District', 'room_type':'Room Type'})
+  room_types_df['Percentage'] = room_types_df.groupby(['District'])['Quantity'].apply(lambda x:100 * x / float(x.sum()))
 
-
-  ######################### ANFITRIÕES MAIS LISTADOS ##########################
-
-  st.header("Quais os andfitriões mais bem avaliados")
-
-
-  rcParams['figure.figsize'] = 20,10
-  ranked = df.groupby(['host_name'])['number_of_reviews'].count().sort_values(ascending=False).reset_index()
-  ranked = ranked.head(5)
   sns.set_style("whitegrid")
-  sns.set(font_scale = 1.5)
-  fig = sns.barplot(y='host_name', x='number_of_reviews', data=ranked,palette="Blues_d",)
-  fig.set_xlabel("Nº de Reviews",fontsize=20)
-  fig.set_ylabel("Host",fontsize=20)
+  sns.set(rc={'figure.figsize':(11.7,8.27)})
+  fig = sns.catplot(y='Percentage', x='District', hue="Room Type", data=room_types_df, height=6, kind="bar", palette="muted", ci=95);
+  fig.set(ylim=(0, 100))
+
+
+  for ax in fig.axes.flat:
+      ax.yaxis.set_major_formatter(PercentFormatter(100))
+  plt.show()
 
   st.pyplot()
 
-  st.write(f"""O anfitrião **{ranked.iloc[0].host_name}** aparece no topo da lista com {ranked.iloc[0].number_of_reviews} reviews.
-  **{ranked.iloc[1].host_name}** é o segundo com {ranked.iloc[1].number_of_reviews} reviews. Cabe salientar ainda que reviews não se tratam de revies positivas ou negativas, mas uma contagem de feedbacks fornecidos para a acomodação.""")
+  st.markdown("The plot shows the ratio of property type and the total number of properties in the borough.")
+
+  st.subheader("Some key observations from the graph are:")
+
+  st.markdown(" - We can see that **Prvate Room** listings are highest in number in all tree borough except Manhattan and Staten Island. Staten Island has more ‘House’ style property than ‘Apartments’ thus, probably the only possible listings are apartments. This analysis seems intuitive, as we know that Staten Island is not that densely populated and has a lot of space.")
+
+  st.markdown(" - The maximum **Entire home/apt** listings are located in Manhattan, constituting 60.55% of all properties in that neighborhood. Next is Staten Island with 49.86% **Entire home/apt**.")
+
+  st.markdown(" - Queens Brooklyn and Bronx also have a lot of **Private room** listings. Queens constitute 59.25% **Private room** listings types, which is greatest after Bronx.")
+
+  st.markdown(" - **Shared Room** listings types are also common in New York. Bronx constitutes of 5.59% of **Shared Room** listings type followed by Queens with 3.58% **Shared Room** listings type.")
+
+  st.markdown(" - Manhattan has nearly 1.55% of **Hotel Room** listings. Next is Queens with 6.83% **Hotel Room** listings followed by Brooklyn with 3.32%. The other tree borough does not present any **Hotel Room** listings.")
 
 
-  #################### ANÁLISE DA DISTRIBUIÇÃO DO PREÇO ######################
+  ###################### PRICE AVERAGE BY ACOMMODATION #########################
 
-  st.header("Distribuição dos Preços")
-  st.write("""Select a custom price range from the side bar to update the histogram below displayed as a Plotly chart using
-  [`st.plotly_chart`](https://streamlit.io/docs/api.html#streamlit.plotly_chart).""")
+  st.header("Average price by room type")
+
+  st.markdown("To listings based on room type, we can show price average grouped by borough.")
+
+  avg_price_room = df.groupby("room_type").price.mean().reset_index()\
+      .round(2).sort_values("price", ascending=False)\
+      .assign(avg_price=lambda x: x.pop("price").apply(lambda y: "%.2f" % y))
+
+  avg_price_room = avg_price_room.rename(columns={'room_type':'Room Type', 'avg_price': 'Average Price ($)', })
+
+  st.table(avg_price_room)
+
+  st.markdown("Despite together **Hotel Room** listings represent just over 10%, they are responsible for the highest price average, followed by **Entire home/apt**. Thus there are a small number of **Hotel Room** listings due its expensive prices.")
+
+
+  ############################ MOST RATED HOSTS #############################
+
+  st.header("Most rated hosts")
+
+  rcParams['figure.figsize'] = 15,7
+  sns.set_style("whitegrid")
+  ranked = df.groupby(['host_name'])['number_of_reviews'].count().sort_values(ascending=False).reset_index()
+  ranked = ranked.head(5)
+  # sns.set(font_scale = 1.5)
+  fig = sns.barplot(y='host_name', x='number_of_reviews', data=ranked,palette="Blues_d",)
+  fig.set_xlabel("Nº de Reviews",fontsize=10)
+  fig.set_ylabel("Host",fontsize=10)
+
+  st.pyplot()
+
+  st.write(f"""The host **{ranked.iloc[0].host_name}** is at the top with {ranked.iloc[0].number_of_reviews} reviews.
+  **{ranked.iloc[1].host_name}** is second with {ranked.iloc[1].number_of_reviews} reviews. It should also be noted that reviews are not positive or negative reviews, but a count of feedbacks provided for the accommodation.""")
+
+
+  #################### DEMAND AND PRICE ANALYIS ######################
+
+  st.header("Popularity and Price Distribution")
+
+  st.markdown("In this section, we will analyse the demand for Airbnb listings in New York City. We will look at demand over the years since the inception of Airbnb in 2010 and across months of the year to understand seasonlity. We also wish to establish a relation between price and demand. The question we aspire to answer is whether prices of listings fluctuate with demand. We will also conduct a more granular analysis to understand how prices vary by days of the week.")
+  st.markdown("To study the demand, since we did not have data on the bookings made over the past year, we will use **number of reviews** variable as the indicator for demand. As per Airbnb, about 50% of guests review the hosts/listings, hence studying the number of review will give us a good estimation of the demand.")
+
+  accommodation = st.radio("Room Type", df.room_type.unique())
+
+  all_accommodation = st.checkbox('All Accommodations')
+
+  demand_df = df[df.last_review.notnull()]
+  demand_df.loc[:,'last_review'] = pd.to_datetime(demand_df.loc[:,'last_review'])
+
+  if all_accommodation:
+    demand_df = df[df.last_review.notnull()]
+    demand_df.loc[:,'last_review'] = pd.to_datetime(demand_df.loc[:,'last_review'])
+  else:
+    demand_df = demand_df.query(f"""room_type==@accommodation""")
+
+  rcParams['figure.figsize'] = 30,20
+  fig = sns.scatterplot(x="last_review", y="number_of_reviews", data=demand_df, alpha=.3, palette=['#599191']);
+  fig.set(ylim=(0, 700))
+  fig.set_xlim([datetime.date(2010, 1, 1), datetime.date(2019, 9, 30)])
+  fig.set_xlabel("Last Review Dates",fontsize=10)
+  fig.set_ylabel("Nª Reviews",fontsize=10)
+
+  st.pyplot()
+
+  st.markdown("The number of unique listings receiving reviews has increased over the years. We can see an almost exponential increase in the number of reviews, which as discussed earlier, indicates an exponential increase in the demand.")
+
+  st.write("""Select a custom price range from the side bar to update the histogram below.""")
   values = st.slider("Faixa de Preço", float(df.price.min()), float(df.price.clip(upper=1000.).max()), (50., 300.))
   f = px.histogram(df.query(f"price.between{values}"), x="price", nbins=100, title="Price distribution")
   f.update_xaxes(title="Price")
@@ -185,9 +261,9 @@ def main():
     percentiles=[.1, .25, .5, .75, .9, .99]).to_frame().T
 
 
-  ################## LISTANDO HOTEIS POR NUMERO DE REVIEWS ####################
+  ####################### LISTINGG BY NUMBER OF REVIEWS #######################
 
-  st.header("Quais as propriedades mais bem avaliadas")
+  st.header("Most rated properties")
   st.write("Enter a range of numbers in the sidebar to view properties whose review count falls in that range.")
 
   st.markdown("_**Note:** É possível otimizar ainda mais sua busca clicando em cima do nome da caracteristica que mais te interessa._")
@@ -196,15 +272,17 @@ def main():
   df.query(f"number_of_reviews<={reviews}").sort_values("number_of_reviews", ascending=False)\
   .head(50)[["number_of_reviews", "price", "neighbourhood", "room_type", "host_name"]]
 
-  st.write("654 é o número mais alto de críticas e apenas uma única propriedade o possui. Em geral, listagens com mais de 400 avaliações têm um preço abaixo de US $ 100. Alguns estão entre US $ 100 e US $ 200, e apenas um tem preço acima de US $ 200.")
+  st.write("654 is the highest number of reviews and only a single property has it. In general, listings with more than 400 reviews are priced below $ 100,00. Some are between $100,00 and $200,00, and only one is priced above $200.")
 
 
   st.markdown(get_table_download_link(df), unsafe_allow_html=True)
 
 
+  ################################## FOOTER ##################################
+
   st.markdown('-----------------------------------------------------')
-  st.text('Desenvolvido por Toni Esteves - 2020')
-  st.text('Contato: toni.esteves@gmail.com')
+  st.text('Developed by Toni Esteves - 2020')
+  st.text('Mail: toni.esteves@gmail.com')
 
 if __name__ == '__main__':
 	main()
