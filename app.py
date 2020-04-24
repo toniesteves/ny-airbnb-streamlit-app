@@ -41,7 +41,7 @@ def main():
   st.sidebar.header("Welcome!")
 
   st.sidebar.markdown(" ")
-  st.sidebar.markdown("I am a researcher in Machine Learning/DS, with an emphasis on Computer Vision and Data Analysis. I work mainly on the following themes: pattern recognition, inferential and descriptive statistics, probability, deep learning.")
+  st.sidebar.markdown("*I am a researcher in Machine Learning/DS, with an emphasis on Computer Vision and Data Analysis. I work mainly on the following themes: pattern recognition, inferential and descriptive statistics, probability, deep learning.*")
 
   st.sidebar.markdown("**Author**: Toni Esteves")
   st.sidebar.markdown("**Mail**: toni.esteves@gmail.com")
@@ -59,7 +59,7 @@ def main():
   st.title("Airbnb NY listings Data Analysis")
   st.markdown('-----------------------------------------------------')
 
-  st.markdown("Through Airbnb NY data we will conduct an exploratory analysis and offer insights into that data. For this we will use the data behind the website **Inside Airbnb** come from publicly available information on the Airbnb website available [here](http://insideairbnb.com/), containing advertisements for accommodation in NY until 2020")
+  st.markdown("*Through Airbnb NY data we will conduct an exploratory analysis and offer insights into that data. For this we will use the data behind the website **Inside Airbnb** come from publicly available information on the Airbnb website available [here](http://insideairbnb.com/), containing advertisements for accommodation in NY until 2020*")
 
 
   st.header("Summary")
