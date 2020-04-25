@@ -168,7 +168,7 @@ def main():
 
   st.markdown(" - The maximum **Entire home/apt** listings are located in Manhattan, constituting 60.55% of all properties in that neighborhood. Next is Staten Island with 49.86% **Entire home/apt**.")
 
-  st.markdown(" - Queens Brooklyn and Bronx also have a lot of **Private room** listings. Queens constitute 59.25% **Private room** listings types, which is greatest after Bronx.")
+  st.markdown(" - Queens, Brooklyn and the Bronx also have many listings for **Private room**. In Queens, 59.25% of the apartments are of the **Private room** type, which is larger than in the Bronx.")
 
   st.markdown(" - **Shared Room** listings types are also common in New York. Bronx constitutes of 5.59% of **Shared Room** listings type followed by Queens with 3.58% **Shared Room** listings type.")
 
