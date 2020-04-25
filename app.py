@@ -115,8 +115,8 @@ def main():
   fig = sns.barplot(x='neighbourhood_group', y='price', data=df.groupby('neighbourhood_group')['price'].mean().sort_values(ascending=False).reset_index(),
   palette="Blues_d")
   sns.set(font_scale = 1.5)
-  fig.set_xlabel("District",fontsize=20)
-  fig.set_ylabel("Price ($)",fontsize=20)
+  fig.set_xlabel("District",fontsize=10)
+  fig.set_ylabel("Price ($)",fontsize=10)
 
   st.pyplot()
 
@@ -164,7 +164,7 @@ def main():
 
   st.subheader("Some key observations from the graph are:")
 
-  st.markdown(" - We can see that **Prvate Room** listings are highest in number in all tree borough except Manhattan and Staten Island. Staten Island has more ‘House’ style property than ‘Apartments’ thus, probably the only possible listings are apartments. This analysis seems intuitive, as we know that Staten Island is not that densely populated and has a lot of space.")
+  st.markdown(" - We can see that **Private Room** listings are highest in number in all tree borough except Manhattan and Staten Island. Staten Island has more ‘House’ style property than ‘Apartments’ thus, probably the only possible listings are apartments. This analysis seems intuitive, as we know that Staten Island is not that densely populated and has a lot of space.")
 
   st.markdown(" - The maximum **Entire home/apt** listings are located in Manhattan, constituting 60.55% of all properties in that neighborhood. Next is Staten Island with 49.86% **Entire home/apt**.")
 
